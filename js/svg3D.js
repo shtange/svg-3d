@@ -39,7 +39,7 @@ function GraphDrawer3D(elem, indX) {
   this.svgGraph = null;
   this.svgViewBox = null;
   this.svgBgColor = 'white';
-  this.svgColor = 'tomato';
+  this.svgColor = '#bb3e77';
   this.svgStrokeWidth = 1;
   this.svgMaxPoints = null;
 
