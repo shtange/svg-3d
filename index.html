@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>SVG 3D: demo</title>
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    body { background: linear-gradient(-90deg, rgba(0,0,0,.05) 1px, transparent 1px), linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px), linear-gradient(-90deg, rgba(0, 0, 0, .04) 1px, transparent 1px), linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px), linear-gradient(transparent 3px, #f2f2f2 3px, #f2f2f2 78px, transparent 78px), linear-gradient(-90deg, #aaa 1px, transparent 1px), linear-gradient(-90deg, transparent 3px, #f2f2f2 3px, #f2f2f2 78px, transparent 78px), linear-gradient(#aaa 1px, transparent 1px), #e9e9e9; background-size: 4px 4px, 4px 4px, 80px 80px, 80px 80px, 80px 80px, 80px 80px, 80px 80px, 80px 80px }
+    .content { max-width: 640px; margin: 0 auto }
+    .widget-wrapper { position: relative; }
+    .widget-wrapper .navigator-wrapper { width: 20px; position: absolute; }
+    .widget-wrapper .navigator-wrapper:after { content: " "; width: 10%; height: 100%; background-color: rgba(0, 0, 0, 0.25); position: absolute; top: 0; left: 45%; z-index: -1; }
+    .widget-wrapper .navigator-caret { width: 20px; border-radius: 20px; background-color: #dadada; border: 2px solid #9b9b9b; box-sizing: border-box; cursor: grab; }
+    .widget-wrapper .anim-btn { width: 50px; height: 50px; background-color: tomato; border-radius: 50px; position: absolute; top: 5%; left: 5%; }
+    .widget-wrapper .anim-btn:hover { background-color: #ec6046; cursor: pointer; }
+    .widget-wrapper .anim-btn:after { content: "►"; position: absolute; color: white; font-size: 28px; top: 10px; left: 15px; }
+  </style>
+
+  <script src="js/svg3D.js"></script>
+</head>
+<body>
+
+  <div class="content">
+    <div class="graph-svg" data-ind-x="2.5"></div>
+    <div class="graph-svg" data-ind-x="2"></div>
+    <div class="graph-svg" data-ind-x="1.5"></div>
+    <div class="graph-svg" data-ind-x="4.5"></div>
+  </div>
+
+  <script>
+    var svg3D = [];
+    document.querySelectorAll('.graph-svg').forEach(function(elem) {
+      svg3D.push(new GraphDrawer3D(elem, parseFloat(elem.getAttribute('data-ind-x'))));
+    });
+  </script>
+</body>
+</html>
