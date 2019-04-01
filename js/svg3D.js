@@ -41,7 +41,7 @@ function GraphDrawer3D(elem, indX) {
   this.svgBgColor = 'white';
   this.svgColor = 'tomato';
   this.svgStrokeWidth = 1;
-  this.svgMaxPoints = 400 * 0.75;
+  this.svgMaxPoints = null;
 
   // Graph options
   this.gMult = null;
@@ -75,9 +75,11 @@ GraphDrawer3D.prototype = {
     this.height = this.width * 0.75;
     this.gMult = this.width / 5;
     this.gOffsetX = this.width / 2;
-    this.gOffsetY = this.height / 2
+    this.gOffsetY = this.height / 2;
 
-    this.svgViewBox = [0, 0, this.width, this.height].join(' ')
+    this.svgViewBox = [0, 0, this.width, this.height].join(' ');
+    this.svgMaxPoints = Math.ceil(this.width / 4) * 2;
+    this.onHold = false;
   },
   setup: function() {
     // SVG Layer
@@ -104,7 +106,7 @@ GraphDrawer3D.prototype = {
     this.svgLayer.appendChild(this.svgGraph);
     this.widget.appendChild(this.svgLayer);
   },
-  drawGraph: function(iterator) {
+  drawGraph: function(iterator, callback) {
     var self = this;
 
     if (!iterator) iterator = 0;
@@ -122,6 +124,8 @@ GraphDrawer3D.prototype = {
     if (!!iterator) this.ratioY += iterator;
 
     this.svgGraph.setAttribute('points', points);
+
+    callback && callback();
   },
   drawNavY: function() {
     var dropzoneHeight = this.height * 0.5,
@@ -169,16 +173,28 @@ GraphDrawer3D.prototype = {
 
     animBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      Array(self.frameCount * 4).fill(null).forEach(function(item, i) {
+      if (self.onHold) return false;
+      self._holder(true);
+      Array(self.frameCount * 4).fill(null).forEach(function(item, i, list) {
         var iterator = i <= self.frameCount || i >= self.frameCount * 3 ? -0.02 : 0.02;
-
-        return setTimeout(self.drawGraph.bind(self, iterator), i * self.frameDelay);
-      }, this)
+        return setTimeout(self.drawGraph.bind(self, iterator, function() {
+          self._holder(i !== list.length - 1)
+        }), i * self.frameDelay);
+      }, this);
     }, false);
 
     wrapper.appendChild(caret);
     this.widget.appendChild(wrapper);
-    this.widget.appendChild(animBtn)
+    this.widget.appendChild(animBtn);
+  },
+  _holder: function(status) {
+    if (this.onHold === status) return false;
+    this.onHold = !!status;
+    if (this.onHold) {
+      this.widget.classList.add('locked');
+    } else {
+      this.widget.classList.remove('locked');
+    }
   },
   _createGraphElement: function(type, attrList) {
     var node = document.createElementNS(this.xmlns, type);

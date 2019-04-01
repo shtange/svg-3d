@@ -10,11 +10,13 @@
     .content { max-width: 640px; margin: 0 auto }
     .widget-wrapper { position: relative; }
     .widget-wrapper .navigator-wrapper { width: 20px; position: absolute; }
+    .widget-wrapper.locked .navigator-wrapper { opacity: 0.5; }
     .widget-wrapper .navigator-wrapper:after { content: " "; width: 10%; height: 100%; background-color: rgba(0, 0, 0, 0.25); position: absolute; top: 0; left: 45%; z-index: -1; }
     .widget-wrapper .navigator-caret { width: 20px; border-radius: 20px; background-color: #dadada; border: 2px solid #9b9b9b; box-sizing: border-box; cursor: grab; }
-    .widget-wrapper .anim-btn { width: 50px; height: 50px; background-color: tomato; border-radius: 50px; position: absolute; top: 5%; left: 5%; }
-    .widget-wrapper .anim-btn:hover { background-color: #ec6046; cursor: pointer; }
-    .widget-wrapper .anim-btn:after { content: "►"; position: absolute; color: white; font-size: 28px; top: 10px; left: 15px; }
+    .widget-wrapper .anim-btn { width: 48px; height: 48px; background-color: tomato; border-radius: 48px; position: absolute; top: 5%; left: 5%; opacity: 1; }
+    .widget-wrapper:not(.locked) .anim-btn:hover { background-color: #ec6046; cursor: pointer; }
+    .widget-wrapper .anim-btn:after { content: "►"; width: 100%; height: 100%; line-height: 2.2; position: absolute; color: white; font-size: 24px; text-align: center; top: 0; left: 0; }
+    .widget-wrapper.locked .anim-btn { opacity: 0.5 }
   </style>
 
   <script src="js/svg3D.js"></script>
