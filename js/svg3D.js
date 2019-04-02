@@ -146,30 +146,11 @@ GraphDrawer3D.prototype = {
     });
     var animBtn = this._createDivElement(['anim-btn']);
 
-    // Mouse
-    caret.addEventListener('mousedown', function(e) {
-      var offsetTop = e.target.offsetTop,
-          startY = e.pageY - offsetTop;
+    // Touch listener
+    this.eventListener(caret, wrapper, 'touchstart', 'touchmove', 'touchend', { caretTopOffset, dropzoneNull, dropzoneHeight})
 
-      e.target.style.cursor = 'grabbing';
-
-      caret.onmousemove = function(e) {
-        e.preventDefault();
-        var top = e.pageY - startY;
-        if (top < 0) top = 0;
-        if (top > caretTopOffset) top = caretTopOffset;
-        e.target.style.marginTop = top.toPX();
-
-        self.ratioY = (top - dropzoneNull) / dropzoneHeight;
-        self.drawGraph();
-      };
-    }, false);
-    
-    caret.addEventListener('mouseup', function(e) {
-      e.preventDefault();
-      e.target.style.cursor = 'grab';
-      caret.onmousemove = null;
-    }, false);
+    // Mouse listener
+    this.eventListener(caret, wrapper, 'mousedown', 'mousemove', 'mouseup', { caretTopOffset, dropzoneNull, dropzoneHeight});
 
     animBtn.addEventListener('click', function(e) {
       e.preventDefault();
@@ -181,11 +162,43 @@ GraphDrawer3D.prototype = {
           self._holder(i !== list.length - 1)
         }), i * self.frameDelay);
       }, this);
+      wrapper.onmousemove = null;
     }, false);
 
     wrapper.appendChild(caret);
     this.widget.appendChild(wrapper);
     this.widget.appendChild(animBtn);
+  },
+  eventListener: function(childElem, parentElem, eventStart, eventMove, eventEnd, options) {
+    var self = this,
+        offsetTop,
+        startY;
+
+    var handleMoveEvent = function(e) {
+      e.preventDefault();
+      var top = (e.pageY || e.touches[0]['pageY']) - startY;
+      if (top < 0) top = 0;
+      if (top > options.caretTopOffset) top = options.caretTopOffset;
+      childElem.style.marginTop = top.toPX();
+
+      self.ratioY = (top - options.dropzoneNull) / options.dropzoneHeight;
+      self.drawGraph();
+    };
+
+    childElem.addEventListener(eventStart, function(e) {
+      offsetTop = e.target.offsetTop;
+      startY = (e.pageY || e.touches[0]['pageY']) - offsetTop;
+
+      e.target.style.cursor = 'grabbing';
+
+      parentElem.addEventListener(eventMove, handleMoveEvent, false);
+    }, false);
+    
+    childElem.addEventListener(eventEnd, function(e) {
+      e.preventDefault();
+      e.target.style.cursor = 'grab';
+      parentElem.removeEventListener(eventMove, handleMoveEvent);
+    }, false);
   },
   _holder: function(status) {
     if (this.onHold === status) return false;
